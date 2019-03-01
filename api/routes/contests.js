@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const multer = require('multer');
+const checkAuth = require('../middleware/auth-service');
 
 const storage = multer.diskStorage({
     destination: (req, file, next) => {
@@ -51,7 +52,7 @@ router.get('/', (req, res, next) => {
         });
 });
 
-router.post('/', upload.single('contestImage'), (req, res, next) => {
+router.post('/', checkAuth, upload.single('contestImage'), (req, res, next) => {
     const contest = new Contest({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,

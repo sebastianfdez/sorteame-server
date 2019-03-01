@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const User = require('../models/user');
 
@@ -64,7 +65,15 @@ router.post('/signin', (req, res, next) => {
                     return res.status(404).json({message: 'Auth fail'});
                 }
                 if (result) {
-                    return res.status(200).json({message: 'Conection succesfull'});
+                    const token = jwt.sign({
+                        email: users[0].email,
+                        userId: users[0]._id,
+                    },
+                    process.env.JWT_PAYLOAD_KEY,
+                    {
+                        expiresIn: "1h",
+                    })
+                    return res.status(200).json({message: 'Conection succesfull', token});
                 }
                 return res.status(404).json({message: 'Auth fail'});
             }
